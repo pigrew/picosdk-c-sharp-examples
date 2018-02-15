@@ -91,7 +91,7 @@ namespace PS4000CSConsole
         private int _channelCount;
         private Imports.Range _firstRange;
         private Imports.Range _lastRange;
-        private Imports.ps4000BlockReady _callbackDelegate;
+        private Imports.BlockReady _callbackDelegate;
 
         /****************************************************************************
          * Callback
@@ -399,7 +399,7 @@ namespace PS4000CSConsole
                         values[segment][channel] = new short[numSamples];
                         pinned[segment, channel] = new PinnedArray<short>(values[segment][channel]);
 
-                        status = Imports.SetDataBuffersRapid(_handle,
+                        status = Imports.SetDataBufferBulk(_handle,
                                                (Imports.Channel)channel,
                                                values[segment][channel],
                                                (int)numSamples,
@@ -407,7 +407,7 @@ namespace PS4000CSConsole
                     }
                     else
                     {
-                        status = Imports.SetDataBuffersRapid(_handle,
+                        status = Imports.SetDataBufferBulk(_handle,
                                    (Imports.Channel)channel,
                                     null,
                                     0,
@@ -662,7 +662,7 @@ namespace PS4000CSConsole
                 for (int i = 0; i < 7; i++)
                 {
                     short requiredSize;
-                    Imports.GetUnitInfo(_handle, line, 80, out requiredSize, i);
+                    Imports.GetUnitInfo(_handle, line, 80, out requiredSize, (Imports.PicoInfo)i);
 
                     if (i == 3)
                     {
@@ -843,8 +843,8 @@ namespace PS4000CSConsole
 
             Console.WriteLine("Waiting for trigger...Press a key to abort");
             _autoStop = false;
-            status = Imports.RunStreaming(_handle, ref sampleInterval, Imports.ReportedTimeUnits.MicroSeconds,
-                                        preTrigger, 1000000 - preTrigger, true, 1000, sampleCount);
+            status = Imports.RunStreaming(_handle, ref sampleInterval, Imports.TimeUnits.MicroSeconds,
+                                        preTrigger, 1000000 - preTrigger, 1, 1000, sampleCount);
             Console.WriteLine("Run Streaming : {0} ", status);
 
             Console.WriteLine("Streaming data...Press a key to abort");
